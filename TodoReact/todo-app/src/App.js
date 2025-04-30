@@ -1,59 +1,55 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import TaskForm from './components/TaskForm';
 import TaskList from './components/TaskList';
+
 import {
   getTasks,
-  addTask as saveTask,
+  addTask,
   updateTask,
-  deleteTask as removeTask
+  deleteTask,
 } from './Services/taskService';
 
-const App = () => {
+function App() {
   const [tasks, setTasks] = useState([]);
-  const [currentTask, setCurrentTask] = useState({ id: null, name: '' });
+  const [selectedTask, setSelectedTask] = useState(null);
+
+  const loadTasks = () => {
+    getTasks()
+      .then((res) => setTasks(res.data))
+      .catch((err) => console.error('Error fetching tasks:', err));
+  };
 
   useEffect(() => {
-    setTasks(getTasks());
+    loadTasks();
   }, []);
 
-  const addTask = (taskName) => {
-    if (currentTask.id !== null) {
-      const updated = tasks.map(task =>
-        task.id === currentTask.id ? { ...task, name: taskName } : task
-      );
-      setTasks(updated);
-      updateTask({ id: currentTask.id, name: taskName });
-      setCurrentTask({ id: null, name: '' });
+  const handleSubmit = (task) => {
+    if (task.id) {
+      updateTask(task.id, task).then(() => loadTasks());
     } else {
-      const newTask = { id: Date.now(), name: taskName };
-      const updated = [...tasks, newTask];
-      setTasks(updated);
-      saveTask(newTask);
+      addTask(task).then(() => loadTasks());
     }
   };
 
-  const deleteTask = (id) => {
-    const updated = tasks.filter(task => task.id !== id);
-    setTasks(updated);
-    removeTask(id);
-    if (currentTask.id === id) setCurrentTask({ id: null, name: '' });
+  const handleDelete = (id) => {
+    deleteTask(id).then(() => loadTasks());
   };
 
-  const editTask = (task) => {
-    setCurrentTask(task);
+  const handleEdit = (task) => {
+    setSelectedTask(task);
   };
 
   return (
-    <div className="container" style={{ maxWidth: '500px', margin: '40px auto' }}>
-      <h2>Todo App</h2>
+    <div className="App">
+      <h1>Todo App</h1>
       <TaskForm
-        onSubmit={addTask}
-        currentTask={currentTask}
-        setCurrentTask={setCurrentTask}
+        onSubmit={handleSubmit}
+        selectedTask={selectedTask}
+        setSelectedTask={setSelectedTask}
       />
-      <TaskList tasks={tasks} onDelete={deleteTask} onEdit={editTask} />
+      <TaskList tasks={tasks} onDelete={handleDelete} onEdit={handleEdit} />
     </div>
   );
-};
+}
 
 export default App;

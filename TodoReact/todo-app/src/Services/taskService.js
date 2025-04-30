@@ -1,30 +1,11 @@
-// src/Services/taskService.js
+import axios from 'axios';
 
-const TASKS_KEY = 'todo-tasks';
+const API_URL = 'http://localhost:8080/api/tasks';
 
-export const getTasks = () => {
-  const tasks = localStorage.getItem(TASKS_KEY);
-  return tasks ? JSON.parse(tasks) : [];
-};
+export const getTasks = () => axios.get(API_URL);
 
-export const saveTasks = (tasks) => {
-  localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
-};
+export const addTask = (task) => axios.post(API_URL, task);
 
-export const addTask = (task) => {
-  const tasks = getTasks();
-  tasks.push(task);
-  saveTasks(tasks);
-};
+export const updateTask = (id, task) => axios.put(`${API_URL}/${id}`, task);
 
-export const updateTask = (updatedTask) => {
-  const tasks = getTasks().map(task =>
-    task.id === updatedTask.id ? updatedTask : task
-  );
-  saveTasks(tasks);
-};
-
-export const deleteTask = (id) => {
-  const tasks = getTasks().filter(task => task.id !== id);
-  saveTasks(tasks);
-};
+export const deleteTask = (id) => axios.delete(`${API_URL}/${id}`);
