@@ -1,0 +1,5 @@
+package com.cdac.enzigma.assignment.repository;
+
+public interface TaskRepository {
+
+}

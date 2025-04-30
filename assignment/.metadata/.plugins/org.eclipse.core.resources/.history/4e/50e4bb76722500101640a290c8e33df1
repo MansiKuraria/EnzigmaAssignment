@@ -1,0 +1,25 @@
+package com.cdac.enzigma.assignment;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+
+@SpringBootApplication(scanBasePackages = {
+		"com.cdac.reminder.practice.controller",
+	    "com.cdac.reminder.practice.Service",
+	    "com.cdac.reminder.practice.repository",
+	    
+	})
+@EntityScan(basePackages = {"com.cdac.reminder.practice.model"})
+
+@EnableJpaRepositories(basePackages = {"com.cdac.reminder.practice.repository"})
+
+public class AssignmentApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(AssignmentApplication.class, args);
+	}
+
+}
